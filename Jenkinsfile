@@ -2,7 +2,6 @@ pipeline {
     agent any
 
     environment {
-        // Keeping your specific data
         IMAGE_NAME = "sairaskar/a6-q2-java-docker-app"
     }
 
@@ -35,10 +34,11 @@ pipeline {
 
         stage('Docker Hub Login') {
             steps {
+                // Fixed the double single-quotes here
                 withCredentials([usernamePassword(
                     credentialsId: 'a6_q2_dockerhub_cred',
-                    usernameVariable: ''DOCKER_USER',
-                    passwordVariable: ''DOCKER_PASS'
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
                 )]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
@@ -55,7 +55,8 @@ pipeline {
     post {
         always {
             echo "Cleaning up local images..."
-            sh 'docker rmi $IMAGE_NAME || true'
+            // It's good practice to ensure variables are handled safely in sh
+            sh "docker rmi ${IMAGE_NAME} || true"
         }
     }
 }
