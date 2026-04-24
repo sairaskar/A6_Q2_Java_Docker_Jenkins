@@ -2,23 +2,25 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "A6-Q2-java-docker-app"
+        // Keeping your specific data
+        IMAGE_NAME = "a6-q2-java-docker-app"
     }
 
     stages {
         stage('Build Docker Image') {
             steps {
+                // Using syntax: sh 'docker build -t $IMAGE_NAME .'
                 echo "Building the Java Docker image..."
-                sh "docker build -t ${IMAGE_NAME} ."
+                sh 'docker build -t $IMAGE_NAME .'
             }
         }
 
-        stage('Run and Verify') {
+        stage('Run Docker Container') {
             steps {
+                // Using your script block logic within the reference flow
                 script {
                     echo "Running container to verify output..."
-                    // Run container, capture output, and remove it immediately (--rm)
-                    def output = sh(script: "docker run --rm ${IMAGE_NAME}", returnStdout: true).trim()
+                    def output = sh(script: "docker run --rm $IMAGE_NAME", returnStdout: true).trim()
                     
                     echo "--- Container Output Start ---"
                     echo output
@@ -32,12 +34,33 @@ pipeline {
                 }
             }
         }
+
+        stage('Docker Hub Login') {
+            steps {
+                // Using exact syntax from reference code
+                withCredentials([usernamePassword(
+                    credentialsId: 'a6_q2_dockerhub_cred',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                // Using syntax: sh 'docker push $IMAGE_NAME'
+                sh 'docker push $IMAGE_NAME'
+            }
+        }
     }
 
     post {
         always {
             echo "Cleaning up local images..."
-            sh "docker rmi ${IMAGE_NAME} || true"
+            // Using syntax: sh 'docker rmi $IMAGE_NAME || true'
+            sh 'docker rmi $IMAGE_NAME || true'
         }
     }
 }
