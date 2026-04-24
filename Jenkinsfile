@@ -9,7 +9,6 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                // Using syntax: sh 'docker build -t $IMAGE_NAME .'
                 echo "Building the Java Docker image..."
                 sh 'docker build -t $IMAGE_NAME .'
             }
@@ -17,7 +16,6 @@ pipeline {
 
         stage('Run Docker Container') {
             steps {
-                // Using your script block logic within the reference flow
                 script {
                     echo "Running container to verify output..."
                     def output = sh(script: "docker run --rm $IMAGE_NAME", returnStdout: true).trim()
@@ -37,7 +35,6 @@ pipeline {
 
         stage('Docker Hub Login') {
             steps {
-                // Using exact syntax from reference code
                 withCredentials([usernamePassword(
                     credentialsId: 'a6_q2_dockerhub_cred',
                     usernameVariable: 'DOCKER_USER',
@@ -50,7 +47,6 @@ pipeline {
 
         stage('Push Docker Image') {
             steps {
-                // Using syntax: sh 'docker push $IMAGE_NAME'
                 sh 'docker push $IMAGE_NAME'
             }
         }
@@ -59,7 +55,6 @@ pipeline {
     post {
         always {
             echo "Cleaning up local images..."
-            // Using syntax: sh 'docker rmi $IMAGE_NAME || true'
             sh 'docker rmi $IMAGE_NAME || true'
         }
     }
