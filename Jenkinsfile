@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         // Keeping your specific data
-        IMAGE_NAME = "a6-q2-java-docker-app"
+        IMAGE_NAME = "sairaskar/a6-q2-java-docker-app"
     }
 
     stages {
@@ -37,8 +37,8 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(
                     credentialsId: 'a6_q2_dockerhub_cred',
-                    usernameVariable: 'DOCKER_USER',
-                    passwordVariable: 'DOCKER_PASS'
+                    usernameVariable: ''DOCKER_USER',
+                    passwordVariable: ''DOCKER_PASS'
                 )]) {
                     sh 'echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin'
                 }
