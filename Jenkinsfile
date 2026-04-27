@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        IMAGE_NAME = "A6-Q2-java-docker-app"
+        IMAGE_NAME = "a6-q2-java-docker-app"
     }
 
     stages {
